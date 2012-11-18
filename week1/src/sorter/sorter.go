@@ -85,8 +85,8 @@ func qhelp(v *vec.Vector, b, e int, c chan int) {
 
 func MSort(v *vec.Vector) {
 	c := make(chan int)
-	mhelp(v, 0, v.Size() - 1, c)
-//	<- c
+	go mhelp(v, 0, v.Size() - 1, c)
+	<- c
 }
 
 func mhelp(v *vec.Vector, b, e int, c chan int) {
@@ -95,13 +95,16 @@ func mhelp(v *vec.Vector, b, e int, c chan int) {
 	}
 
 	if (e - b) < 1 {
+		c <- 1
 		return
 	}
 	c1 := make(chan int)
 	c2 := make(chan int)
 	mid := (e - b) / 2 + b
-	mhelp(v, b, mid, c1)
-	mhelp(v, mid+1, e, c2)
+	go mhelp(v, b, mid, c1)
+	go mhelp(v, mid+1, e, c2)
+	<- c1
+	<- c2
 	i := b
 	j := mid+1
 	l := e - b + 1
@@ -134,5 +137,5 @@ func mhelp(v *vec.Vector, b, e int, c chan int) {
 	for ix := 0; ix < l; ix++ {
 		*v.At(b+ix) = *sorted.At(ix)
 	}
-
+	c <- 1
 }
