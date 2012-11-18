@@ -18,8 +18,11 @@ func main() {
 				break
 			}
 		}
-		fmt.Printf("Got: %d\n", i)
+		// fmt.Printf("Got: %d\n", i)
 		v.Push_back(i)
 	}
 	sorter.Sort(v)
+	for v := range v.Items() {
+		fmt.Printf("%d\n", v);
+	}
 }
