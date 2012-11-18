@@ -16,7 +16,7 @@ func swap(a, b *int) {
 
 func qhelp(v *vec.Vector, b, e int, c chan int) {
 	if debug {
-		fmt.Printf("qhelp(%d, %d)\n", b, e)
+		fmt.Printf("qhelp(%d, %d)", b, e)
 	}
 
 	if (e - b) < 1 {
@@ -81,4 +81,58 @@ func qhelp(v *vec.Vector, b, e int, c chan int) {
 	<- c1
 	<- c2
 	c <- 1
+}
+
+func MSort(v *vec.Vector) {
+	c := make(chan int)
+	mhelp(v, 0, v.Size() - 1, c)
+//	<- c
+}
+
+func mhelp(v *vec.Vector, b, e int, c chan int) {
+	if debug {
+		fmt.Printf("mhelp(%d, %d)\n", b, e)
+	}
+
+	if (e - b) < 1 {
+		return
+	}
+	c1 := make(chan int)
+	c2 := make(chan int)
+	mid := (e - b) / 2 + b
+	mhelp(v, b, mid, c1)
+	mhelp(v, mid+1, e, c2)
+	i := b
+	j := mid+1
+	l := e - b + 1
+	sorted := vec.MakeVector(l, 0)
+	p := 0
+	for i <= mid && j <= e {
+		var m int;
+		if (*v.At(i) < *v.At(j)) {
+			m = *v.At(i)
+			i++
+		} else {
+			m = *v.At(j)
+			j++
+		}
+		*sorted.At(p) = m
+		p++
+	}
+	for i <= mid {
+		*sorted.At(p) = *v.At(i)
+		i++
+		p++
+	}
+
+
+	for j <= e {
+		*sorted.At(p) = *v.At(j)
+		j++
+		p++
+	}
+	for ix := 0; ix < l; ix++ {
+		*v.At(b+ix) = *sorted.At(ix)
+	}
+
 }

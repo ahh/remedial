@@ -21,7 +21,7 @@ func main() {
 		// fmt.Printf("Got: %d\n", i)
 		v.Push_back(i)
 	}
-	sorter.QSort(&v)
+	sorter.MSort(&v)
 	last := -1
 	for v := range v.Items() {
 		if last > v {

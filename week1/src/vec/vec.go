@@ -27,6 +27,35 @@ func (v *Vector) Capacity() int {
 	return cap(v.elements)
 }
 
+func (v *Vector) CopyFrom(rhs *Vector) {
+	v.Resize(rhs.Size())
+	for p := 0; p < v.Size(); p++ {
+		v.elements[p] = rhs.elements[p]
+	}
+}
+
+func (v *Vector) Resize(n int) {
+	if n < v.Capacity()/2 {
+		e := make([]int, n, n)
+		for k := range e {
+			e[k] = v.elements[k]
+		}
+		v.elements = e
+	} else if n <= v.Capacity() {
+		v.elements = v.elements[:n]
+	} else {
+		m := n
+		if (m < v.Capacity()*2) {
+			m = v.Capacity() * 2
+		}
+		e := make([]int, m, m)
+		for k := range v.elements {
+			e[k] = v.elements[k]
+		}
+		v.elements = e
+	}
+}
+
 func (v *Vector) Empty() bool {
 	return len(v.elements) == 0;
 }
