@@ -4,9 +4,9 @@ import "vec"
 import "fmt"
 
 func QSort(v *vec.Vector) {
-	c := make(chan int)
-	qhelp(v, 0, v.Size() - 1, c)
-//	<- c
+	c := make(chan int, 1)
+	go qhelp(v, 0, v.Size() - 1, c)
+	<- c
 }
 var debug bool = false
 
@@ -20,6 +20,7 @@ func qhelp(v *vec.Vector, b, e int, c chan int) {
 	}
 
 	if (e - b) < 1 {
+		c <- 1
 		return
 	}
 //	fmt.Printf("qhelp: %d %d\n", b, e)
@@ -73,11 +74,11 @@ func qhelp(v *vec.Vector, b, e int, c chan int) {
 		}
 		fmt.Printf("]\n")
 	}
-	c1 := make(chan int)
-	c2 := make(chan int)
-	qhelp(v, b, i-1, c1)
-	qhelp(v, j , e, c2)
-//	<- c1
-//	<- c2
-	//c <- 1
+	c1 := make(chan int, 1)
+	c2 := make(chan int, 1)
+	go qhelp(v, b, i-1, c1)
+	go qhelp(v, j , e, c2)
+	<- c1
+	<- c2
+	c <- 1
 }
